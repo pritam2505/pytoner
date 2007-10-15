@@ -42,28 +42,31 @@ class Product(core.Dao):
                  brand_id, product_name, product_desc,
                  product_count
                ) VALUES (
-                 %d, '%s', '%s', %d
+                 %(product_brand_id)s, %(product_name)s, %(product_desc)s, %(product_count)s
                );
-             """ % ( product._brand._id, product._name, product._desc,
-                     product._count )
+             """ 
+             
+             
+    params = { 'product_brand_id': product._brand._id, 'product_name': product._name, 
+               'product_desc': product._desc, 'product_count': product._count } 
 
     cur = self._sql._connect.cursor()
-    cur.execute(query)
+    cur.execute(query, params)
 
     cur.close()
 
   def del_by_id(self, product_id):
-    query = "DELETE FROM product WHERE product_id = %d;" % (product_id)
+    query = "DELETE FROM product WHERE product_id = %(product_id)s;"
 
     cur = self._sql._connect.cursor()
-    cur.execute(query)
+    cur.execute(query, {'product_id': product_id})
     cur.close()
 
   def del_by_name(self, product_name):
-    query = "DELETE FROM product WHERE product_name = '%s';" % ( product_name )
+    query = "DELETE FROM product WHERE product_name = %(product_name)s;"
 
     cur = self._sql._connect.cursor()
-    cur.execute(query)
+    cur.execute(query, {'product_name': product_name})
     cur.close()
 
   def get_by_id(self, product_id):
@@ -72,10 +75,10 @@ class Product(core.Dao):
                FROM
                  product
                WHERE
-                 product_id = %d;""" % ( product_id )
+                 product_id = %(product_id)s;"""
 
     cur = self._sql._connect.cursor()
-    cur.execute(query)
+    cur.execute(query, {'product_id': product_id})
 
     product = None
     if cur.rowcount == 1:
@@ -92,10 +95,10 @@ class Product(core.Dao):
                FROM
                  product
                WHERE
-                 product_name = '%s';""" % ( product_name )
+                 product_name = %(product_name)s;"""
 
     cur = self._sql._connect.cursor()
-    cur.execute(query)
+    cur.execute(query, {'product_name': product_name})
 
     product = None
     if cur.rowcount == 1:
@@ -126,10 +129,10 @@ class Product(core.Dao):
                FROM 
                 product NATURAL JOIN brand
                WHERE
-                brand_name = '%s';""" % (brand_name)
+                brand_name = %(brand_name)s;""" 
 
     cur = self._sql._connect.cursor()
-    cur.execute(query)
+    cur.execute(query, {'brand_name': brand_name})
     list = self._make_list(cur) 
     cur.close()
 
@@ -137,18 +140,20 @@ class Product(core.Dao):
 
   def update(self, product):
     query = """UPDATE 
-                 product
+                product
                SET
-                brand_id = %d,
-                product_name = '%s',
-                product_desc = '%s',
-                product_count = %d
+                brand_id = %(brand_id)s,
+                product_name = %(product_name)s,
+                product_desc = %(product_desc)s,
+                product_count = %(product_count)s
                WHERE
-                 product_id = %d;""" % (product._brand._id, product._name, product._desc,
-                                        product._count, product._id )
+                 product_id = %(product_id)s;"""
     
+    params = {'brand_id': product._brand._id, 'product_name': product._name, 'product_desc': product._desc, 'product_count': product._count,
+              'product_id': product._id}
+
     cur = self._sql._connect.cursor()
-    cur.execute(query)
+    cur.execute(query, params)
     cur.close()
 
   def count_incr(self, product_id):
@@ -157,10 +162,10 @@ class Product(core.Dao):
                SET
                  product_count = product_count + 1
                WHERE
-                 product_id = %d;"""
+                 product_id = %(product_id)s;"""
 
     cur = self._sql._connect.cursor()
-    cur.execute(query, [product_id])
+    cur.execute(query, {'product_id': product_id})
     cur.close()
 
   def count_decr(self, product_id):
@@ -169,24 +174,24 @@ class Product(core.Dao):
                SET
                  product_count = product_count - 1
                WHERE
-                 product_id = %d;"""
+                 product_id = %(product_id)s;"""
 
     cur = self._sql._connect.cursor()
-    cur.execute(query, [product_id])
+    cur.execute(query, {'product_id':product_id})
     cur.close()
 
-  def search(self, product_name):
+  def search(self, search):
     query = """SELECT
                  product_id, brand_id, product_name, product_desc,
                  product_count
                FROM
                  product
                WHERE
-                 product_name LIKE '%s';
-            """ % ( product_name )
+                 product_name LIKE %(search)s;
+            """
 
     cur = self._sql._connect.cursor()
-    cur.execute(query)
+    cur.execute(query, {'search': search})
     list = self._make_list(cur)
     cur.close()
 

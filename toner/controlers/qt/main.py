@@ -1,5 +1,5 @@
 
-from toner import core, dao, views
+from toner import core, dao, views, models
 
 import sys
 
@@ -56,7 +56,10 @@ class Main(QtGui.QMainWindow):
     sys.exit(self._app.exec_())
 
   def brand_add(self):
-    self._brand_dao.add(self._pytoner.brand_combo.currentText())
+    # add data
+    brand = models.Brand(-1, self._pytoner.brand_combo.currentText())
+    self._brand_dao.add(brand)
+    # update display
     self.brand_update()
 
   def brand_del(self):
