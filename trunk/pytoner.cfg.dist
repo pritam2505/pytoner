@@ -1,0 +1,16 @@
+[win32]
+python=c:\Python25\pythonw.exe
+
+[pytoner]
+interface=qt
+logs=false
+
+[logs]
+logs/pytoner_all.log=*
+
+[mysql]
+host=mysql.server.org
+user=user1
+pass=pass
+db=database
+
