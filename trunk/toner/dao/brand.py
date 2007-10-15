@@ -30,10 +30,10 @@ class Brand(core.Dao):
       self._logs.info('brand %s exists !' % (brand._name))
       return False
       
-    query = "INSERT INTO brand ( brand_name ) VALUES ( '%s');" %  (brand._name)
+    query = "INSERT INTO brand ( brand_name ) VALUES ( %(brand_name)s );"
     
     cur = self._sql._connect.cursor()
-    cur.execute(query)
+    cur.execute(query, {'brand_name': brand._name })
     cur.close()
     
     return True
@@ -45,17 +45,16 @@ class Brand(core.Dao):
     cur.close()
 
   def del_by_name(self, brand_name):
-    query = "DELETE FROM brand WHERE brand_name = '%s';" % (brand_name)
+    query = "DELETE FROM brand WHERE brand_name = %(brand_name)s;"
     cur = self._sql._connect.cursor()
-    cur.execute(query)
+    cur.execute(query, {'brand_name': brand_name})
     cur.close()
   
   def exists_by_name(self, brand_name):
-    query = "SELECT brand_id FROM brand WHERE brand_name = '%s';" % (
-            brand_name )
+    query = "SELECT brand_id FROM brand WHERE brand_name = %(brand_name)s;" 
   
     cur = self._sql._connect.cursor()
-    cur.execute(query)
+    cur.execute(query, {'brand_name': brand_name})
     
     if cur.rowcount == 1:
       result = True
@@ -66,7 +65,7 @@ class Brand(core.Dao):
     return result
 
   def exists_by_id(self, brand_id):
-    query = "SELECT brand_id FROM brand WHERE brand_id = '%d';" % ( brand_id )
+    query = "SELECT brand_id FROM brand WHERE brand_id = %d;" % ( brand_id )
 
     cur = self._sql._connect.cursor()
     cur.execute(query)
@@ -101,10 +100,10 @@ class Brand(core.Dao):
     return result
 
   def get_by_name(self, brand_name):
-    query = "SELECT brand_id FROM brand WHERE brand_name = '%s';" % (brand_name)
+    query = "SELECT brand_id FROM brand WHERE brand_name = %(brand_name)s;"
 
     cur = self._sql._connect.cursor()
-    cur.execute(query)
+    cur.execute(query, {'brand_name':brand_name})
 
     result = None
     if cur.rowcount == 1:
@@ -129,21 +128,19 @@ class Brand(core.Dao):
       UPDATE
         brand
       SET
-        brand_name = '%s'
+        brand_name = %(brand_name)s
       WHERE
-        brand_id = %d;""" % ( brand._name, brand._id )
+        brand_id = %(brand_id)s;"""
 
     cur = self._sql._connect.cursor()
-    cur.execute(query)
+    cur.execute(query, {'brand_name': brand._name, 'brand_id': brand._id})
     cur.close()
 
-  def search(self, brand_name):
-    query = """
-      SELECT brand_id, brand_name FROM brand WHERE brand_name LIKE '%s';
-    """ % ( brand_name )
-    
+  def search(self, search):
+    query = """SELECT brand_id, brand_name FROM brand WHERE brand_name LIKE %(search)s;"""
+
     cur = self._sql._connect.cursor()
-    cur.execute(query)
+    cur.execute(query, {'search': search})
     brands = self._make_list(cur)
     cur.close()
 
